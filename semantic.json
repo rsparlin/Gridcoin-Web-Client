@@ -16,7 +16,7 @@
     "clean": "../content/semantic"
   },
   "permission": false,
-  "autoInstall": false,
+  "autoInstall": true,
   "rtl": false,
   "components": [
     "reset",
@@ -69,5 +69,5 @@
     "state",
     "visibility"
   ],
-  "version": "2.2.13"
+  "version": "2.2.14"
 }

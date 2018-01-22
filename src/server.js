@@ -6,7 +6,11 @@ const config = require('config');
 
 /* Get config */
 const appConfig = {
-	test: config.get('test')
+	rpc: {
+		baseUrl: config.get('rpc.baseurl'),
+		username: config.get('rpc.username'),
+		password: config.get('rpc.password'),
+	}
 };
 
 /* Create server */

@@ -1,5 +1,7 @@
 {
-	"test": {
-		"a": "b"
+	"rpc": {
+		"baseurl": "",
+		"username": "",
+		"password": ""
 	}
 }
