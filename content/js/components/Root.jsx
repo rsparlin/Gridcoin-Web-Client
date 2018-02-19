@@ -1,83 +1,102 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Segment, Menu } from 'semantic-ui-react';
+import { matchPath, withRouter, Route, Switch, Redirect, Link } from 'react-router-dom';
 
 import Dashboard from './Dashboard.jsx';
+import Network from './Network.jsx';
 
-import { Segment, Menu, Image, List, Flag, Input } from 'semantic-ui-react';
-
+/*
 const GridcoinLogo = () => (
-	<Image src='assets/gridcoin/GRCLogoOnly_White_Transparent.png'
-		style={{ position: 'fixed', right: '0.1em', top: '0.1em' }}
-		size='tiny' />
+  <Image src='assets/gridcoin/GRCLogoOnly_White_Transparent.png'
+    style={{ position: 'fixed', right: '0.1em', top: '0.1em' }}
+    size='tiny' />
 );
-
-const MainMenu = () => (
-	<Menu borderless>
-		<Menu.Item as='a' name='dashboard' />
-		<Menu.Item as='a' name='wallet' />
-		<Menu.Item as='a' name='transactions' />
-		<Menu.Item as='a' name='network' />
-		<Menu.Item as='a' name='mining' />
-		<Menu.Item as='a' name='about' />
-	</Menu>
-);
+*/
 
 class Root extends React.PureComponent {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-		this.state = {
-		};
-	}
+  render() {
+    const nav = [
+      {
+        name: 'Dashboard',
+        component: Dashboard,
+        path: '/dashboard',
+      },
+      {
+        name: 'Wallet',
+        component: Dashboard,
+        path: '/wallet',
+      },
+      {
+        name: 'Transactions',
+        component: Dashboard,
+        path: '/transactions',
+      },
+      {
+        name: 'Network',
+        component: Network,
+        path: '/network',
+      },
+      {
+        name: 'Mining',
+        component: Dashboard,
+        path: '/mining',
+      },
+      {
+        name: 'About',
+        component: Dashboard,
+        path: '/about',
+      },
+    ];
 
-	async getPeerInfo() {
-		try {
-			const res = await this.state.api.getPeerInfo();
+    const defaultNav = nav[0];
 
-			if (res.error) throw res.error;
+    const activeNav = nav.find(item => matchPath(this.props.location.pathname, {
+      path: item.path,
+    })) || defaultNav;
 
-			this.setState({
-				peers: res.result
-			});
-		} catch (e) {
-			console.error(e);
-
-			this.setState({
-				error: true
-			});
-		}
-	}
-
-	getPeerList() {
-		return (
-			<List divided relaxed size='large' style={{textAlign: 'left'}}>
-				{this.state.peers.sort((a, b) => (a.conntime - b.conntime)).map((e) => (
-					<List.Item key={e.addr}>
-						<List.Content>
-							<List.Header>
-								<Flag name={e.country.toLowerCase()} />
-								{e.addr.split(':')[0]}
-							</List.Header>
-							<List.Description>
-								{Math.round(e.pingtime * 1000)}ms
-							</List.Description>
-						</List.Content>
-					</List.Item>
-				))}
-			</List>
-		);
-	}
-
-	render() {
-		return (
-			<div>
-				{/*<GridcoinLogo />*/}
-				<MainMenu />
-				<Segment vertical basic>
-					<Dashboard />
-				</Segment>
-			</div>
-		);
-	}
+    return (
+      <div>
+        <Menu borderless>
+          {
+            nav.map(item => (
+              <Menu.Item
+                key={item.name}
+                as={Link}
+                to={item.path}
+                name={item.name}
+                active={item === activeNav}
+              />
+            ))
+          }
+        </Menu>
+        {/* <GridcoinLogo /> */}
+        <Segment vertical basic>
+          <Switch>
+            {
+              nav.map(item => (
+                <Route key={item.name} path={item.path} component={item.component} />
+              ))
+            }
+            <Route>
+              <Redirect to={defaultNav.path} />
+            </Route>
+          </Switch>
+        </Segment>
+      </div>
+    );
+  }
 }
 
-export default Root;
+Root.propTypes = {
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
+export default withRouter(Root);

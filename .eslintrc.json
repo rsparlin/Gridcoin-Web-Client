@@ -8,7 +8,7 @@
 	"plugins": [
 		"html", "react"
 	],
-	"extends": [ "eslint:recommended", "plugin:react/recommended" ],
+	"extends": [ "eslint:recommended", "plugin:react/recommended", "airbnb" ],
 	"parserOptions": {
 		"sourceType": "module",
 		"allowImportExportEverywhere": true,
@@ -17,27 +17,7 @@
 		}
 	},
 	"rules": {
-		"no-var": [
-			"error"
-		],
-		"no-console": "off",
-		"indent": [
-			"error",
-			"tab"
-		],
-		"quotes": [
-			"error",
-			"single"
-		],
-		"semi": [
-			"error",
-			"always"
-		],
-		"no-unused-vars": [
-			"warn",
-			{
-				"args": "none"
-			}
-		]
+		"no-console": 0,
+		"import/extensions": 0
 	}
 }

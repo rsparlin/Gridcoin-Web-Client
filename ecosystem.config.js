@@ -3,23 +3,26 @@ module.exports = {
    * Application configuration section
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
-  apps : [
+  apps: [
     {
-      name      : 'GridcoinWebClient',
-      script    : 'src/server.js',
-      watch     : [ 'src/*.js' ],
+      name: 'GridcoinWebClient',
+      script: 'src/server.js',
+
       env: {
+        watch: ['src/*.js'],
         WEB_PORT: '8080',
-        NODE_ENV: 'development'
+        NODE_ENV: 'development',
       },
-      env_development : {
-        WEB_POST: '8080',
-        NODE_ENV: 'development'
+      env_development: {
+        watch: ['src/*.js'],
+        WEB_PORT: '8080',
+        NODE_ENV: 'development',
       },
-      env_production : {
+      env_production: {
         WEB_PORT: '5000',
-        NODE_ENV: 'production'
-      }
-    }
-  ]
+        NODE_ENV: 'production',
+        watch: false,
+      },
+    },
+  ],
 };
