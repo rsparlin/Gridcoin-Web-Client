@@ -54,7 +54,7 @@ const server = new Hapi.Server({
       },
     });
     await server.start();
-    console.log('Server started at: ', server.info.uri);
+    console.log('Server started at: %s (%s)', server.info.uri, new Date());
   } catch (e) {
     console.error(e);
     process.exit(1);

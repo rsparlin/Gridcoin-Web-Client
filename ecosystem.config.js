@@ -7,14 +7,9 @@ module.exports = {
     {
       name: 'GridcoinWebClient',
       script: 'src/server.js',
+      watch: ['src/'],
 
       env: {
-        watch: ['src/*.js'],
-        WEB_PORT: '8080',
-        NODE_ENV: 'development',
-      },
-      env_development: {
-        watch: ['src/*.js'],
         WEB_PORT: '8080',
         NODE_ENV: 'development',
       },

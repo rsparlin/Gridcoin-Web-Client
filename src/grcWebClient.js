@@ -29,17 +29,6 @@ class GrcWebClient {
       }),
     };
 
-    /* Routes for allowed methods that take no arguments */
-    server.route([
-      'getinfo', 'getmininginfo', 'getnettotals',
-    ].map(method => ({
-      method: 'GET',
-      path: `/api/${method}`,
-      options: {
-        handler: async (req, h) => (h.response(await this.request(method))),
-      },
-    })));
-
     /* Server method for IP geolocation */
     server.method('geolocate', ip => (Geolocation.locate(ip)), {
       cache: {
@@ -61,8 +50,48 @@ class GrcWebClient {
       },
     });
 
+
+    /* Routes for allowed methods that take no arguments */
+    server.route([
+      'getinfo', 'getmininginfo', 'getnettotals', 'listunspent'
+    ].map(method => ({
+      method: 'GET',
+      path: `/api/${method}`,
+      options: {
+        handler: async (req, h) => (h.response(await this.request(method))),
+      },
+    })));
+
     /* Routes for more complicated methods */
     server.route([
+      {
+        method: 'GET',
+        path: '/api/listtransactions/{from}/{amount}',
+        options: {
+          handler: async (req, h) => {
+            const amount = Number(req.params.amount);
+            const from = Number(req.params.from);
+
+            if (Number.isNaN(amount) || Number.isNaN(from)) throw Boom.badRequest();
+
+            const transactions = await this.request('listtransactions', [
+              '', amount, from,
+            ]);
+
+            const blocks = await Promise.all(transactions.result.filter(e => e.generated).map(e => (
+              this.request('getblock', [e.blockhash], 10 * 1000)
+            )));
+
+            return h.response({
+              transactions: transactions.result,
+              blocks: blocks.reduce((a, v) => {
+                a[v.result.hash] = v.result; // eslint-disable-line no-param-reassign
+                return a;
+              }, {}),
+            });
+          },
+        },
+      },
       {
         method: 'GET',
         path: '/api/getSummary',

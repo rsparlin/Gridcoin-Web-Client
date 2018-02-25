@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Segment, Menu } from 'semantic-ui-react';
+import { Menu, Responsive } from 'semantic-ui-react';
 import { matchPath, withRouter, Route, Switch, Redirect, Link } from 'react-router-dom';
 
 import Dashboard from './Dashboard.jsx';
 import Network from './Network.jsx';
+import Transactions from './Transactions.jsx';
+import Wallet from './Wallet.jsx';
 
 /*
 const GridcoinLogo = () => (
@@ -29,12 +31,12 @@ class Root extends React.PureComponent {
       },
       {
         name: 'Wallet',
-        component: Dashboard,
+        component: Wallet,
         path: '/wallet',
       },
       {
         name: 'Transactions',
-        component: Dashboard,
+        component: Transactions,
         path: '/transactions',
       },
       {
@@ -60,34 +62,47 @@ class Root extends React.PureComponent {
       path: item.path,
     })) || defaultNav;
 
+    const navItems = nav.map(item => (
+      <Menu.Item
+        key={item.name}
+        as={Link}
+        to={item.path}
+        name={item.name}
+        active={item === activeNav}
+      />
+    ));
+
+    const content = (
+      <Switch>
+        {
+          nav.map(item => (
+            <Route key={item.name} path={item.path} component={item.component} />
+          ))
+        }
+        <Route>
+          <Redirect to={defaultNav.path} />
+        </Route>
+      </Switch>
+    );
+
     return (
       <div>
-        <Menu borderless>
-          {
-            nav.map(item => (
-              <Menu.Item
-                key={item.name}
-                as={Link}
-                to={item.path}
-                name={item.name}
-                active={item === activeNav}
-              />
-            ))
-          }
-        </Menu>
-        {/* <GridcoinLogo /> */}
-        <Segment vertical basic>
-          <Switch>
-            {
-              nav.map(item => (
-                <Route key={item.name} path={item.path} component={item.component} />
-              ))
-            }
-            <Route>
-              <Redirect to={defaultNav.path} />
-            </Route>
-          </Switch>
-        </Segment>
+        <Responsive as="div" minWidth={768}>
+          <Menu borderless fixed="left" vertical>
+            {navItems}
+          </Menu>
+          <div style={{ height: '100%', marginLeft: '15rem' }}>
+            {content}
+          </div>
+        </Responsive>
+        <Responsive as="div" maxWidth={767}>
+          <Menu borderless fixed="top">
+            {navItems}
+          </Menu>
+          <div style={{ width: '100%', marginTop: '5rem' }}>
+            {content}
+          </div>
+        </Responsive>
       </div>
     );
   }

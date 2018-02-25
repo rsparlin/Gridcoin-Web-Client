@@ -1,10 +1,20 @@
 export default class GrcApi {
-  static request(method) {
-    return fetch(`api/${encodeURIComponent(method)}`, {
+  static async request(method, ...params) {
+    const paramStr = params.length ? `/${params.map(encodeURIComponent).join('/')}` : '';
+
+    const raw = await fetch(`api/${encodeURIComponent(method)}${paramStr}`, {
       method: 'GET',
       mode: 'cors',
       json: true,
-    }).then(res => (res.json()));
+    });
+
+    const res = await raw.json();
+    if (res.error) throw res.error;
+    return res;
+  }
+
+  static listTransactions(amount, from) {
+    return GrcApi.request('listtransactions', from, amount);
   }
 
   static getSummary() {
@@ -25,5 +35,18 @@ export default class GrcApi {
 
   static getPeerInfo() {
     return GrcApi.request('getpeerinfo');
+  }
+
+  static async getTicker() {
+    const tickerUri = 'https://api.coinmarketcap.com/v1/ticker/gridcoin/';
+
+    const raw = await fetch(tickerUri, {
+      method: 'GET',
+      json: true,
+    });
+
+    const res = await raw.json();
+    if (res.error) throw res.error;
+    return res;
   }
 }
