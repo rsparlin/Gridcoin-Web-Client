@@ -50,10 +50,34 @@ class GrcWebClient {
       },
     });
 
+    /* Server method for GRC ticker */
+    server.method('ticker', async () => {
+      const ticker = await rp.get({
+        uri: 'https://api.coinmarketcap.com/v1/ticker/gridcoin/',
+        simple: true,
+        json: true,
+      });
+
+      if (!ticker[0]) throw Boom.badGateway();
+
+      return ticker[0];
+    }, {
+      cache: {
+        expiresIn: 1 * 60 * 1000,
+        generateTimeout: 5000,
+      },
+    });
+
+    /* Route for ticker */
+    server.route({
+      method: 'GET',
+      path: '/api/getTicker',
+      handler: async (req, h) => (h.response(await server.methods.ticker())),
+    });
 
     /* Routes for allowed methods that take no arguments */
     server.route([
-      'getinfo', 'getmininginfo', 'getnettotals', 'listunspent'
+      'getinfo', 'getmininginfo', 'getnettotals', 'listunspent',
     ].map(method => ({
       method: 'GET',
       path: `/api/${method}`,
@@ -104,8 +128,8 @@ class GrcWebClient {
               this.request('listtransactions', ['', 10], 30 * 1000),
             ]);
 
-            const txdata = await Promise.all(recent.result.map(e => (
-              this.request('gettransaction', [e.txid], 10 * 1000)
+            const blocks = await Promise.all(recent.result.filter(e => e.generated).map(e => (
+              this.request('getblock', [e.blockhash], 10 * 1000)
             )));
 
             return h.response({
@@ -113,8 +137,8 @@ class GrcWebClient {
               mininginfo: mininginfo.result,
               recent: recent.result,
               nettotals: nettotals.result,
-              txinfo: txdata.reduce((a, v) => {
-                a[v.result.txid] = v.result; // eslint-disable-line no-param-reassign
+              blocks: blocks.reduce((a, v) => {
+                a[v.result.hash] = v.result; // eslint-disable-line no-param-reassign
                 return a;
               }, {}),
             });

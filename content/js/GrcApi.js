@@ -37,16 +37,7 @@ export default class GrcApi {
     return GrcApi.request('getpeerinfo');
   }
 
-  static async getTicker() {
-    const tickerUri = 'https://api.coinmarketcap.com/v1/ticker/gridcoin/';
-
-    const raw = await fetch(tickerUri, {
-      method: 'GET',
-      json: true,
-    });
-
-    const res = await raw.json();
-    if (res.error) throw res.error;
-    return res;
+  static getTicker() {
+    return GrcApi.request('getTicker');
   }
 }

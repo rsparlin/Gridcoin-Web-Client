@@ -36,7 +36,7 @@ export default class Dashboard extends React.PureComponent {
       mininginfo: res.mininginfo,
       recentTrans: res.recent,
       nettotals: res.nettotals,
-      txinfo: res.txinfo,
+      blocks: res.blocks,
       error: false,
     });
   }
@@ -70,7 +70,7 @@ export default class Dashboard extends React.PureComponent {
       <Segment vertical basic>
         <Grid container columns="equal" stackable>
           <Grid.Row>
-            <List relaxed size="massive" horizontal style={{ margin: '0 auto' }}>
+            <List relaxed size="huge" horizontal style={{ margin: '0 auto' }}>
               <List.Item>
                 <List.Icon name="cubes" />
                 <List.Content>
@@ -136,22 +136,27 @@ export default class Dashboard extends React.PureComponent {
                 items={
                   (this.state.recentTrans || []).sort((a, b) => (
                     a.confirmations - b.confirmations
-                  )).map(e => (
-                    this.state.txinfo[e.txid]
-                  )).map(e => (
-                    <List.Item key={e.txid}>
-                      <List.Content>
-                        <List.Header>
-                          {e.details[0].Type} &mdash; {e.details[0].account}
-                        </List.Header>
-                        {e.details[0].amount}
-                        <List.Description>
-                          {e.confirmations} confirmations
-                          <Moment fromNow unix style={{ float: 'right' }}>{e.timereceived}</Moment>
-                        </List.Description>
-                      </List.Content>
-                    </List.Item>
-                  ))
+                  )).map((e) => {
+                    const block = e.generated && this.state.blocks[e.blockhash];
+                    const genType = (block && block.ResearchSubsidy) ? 'DPoR' : 'Interest';
+
+                    return (
+                      <List.Item key={e.txid}>
+                        <List.Content>
+                          <List.Header>
+                            {block ? genType : e.Type} &mdash; {e.account}
+                          </List.Header>
+                          {(block ? (`${block.Interest.toFixed(2)} + ${block.ResearchSubsidy.toFixed(2)} (DPoR)`) : e.amount.toFixed(2))}
+                          <List.Description>
+                            {e.confirmations} confirmations
+                            <Moment fromNow unix style={{ float: 'right' }}>
+                              {e.timereceived}
+                            </Moment>
+                          </List.Description>
+                        </List.Content>
+                      </List.Item>
+                    );
+                  })
                 }
               />
             </Grid.Column>

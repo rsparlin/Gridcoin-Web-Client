@@ -8,14 +8,6 @@ import Network from './Network.jsx';
 import Transactions from './Transactions.jsx';
 import Wallet from './Wallet.jsx';
 
-/*
-const GridcoinLogo = () => (
-  <Image src='assets/gridcoin/GRCLogoOnly_White_Transparent.png'
-    style={{ position: 'fixed', right: '0.1em', top: '0.1em' }}
-    size='tiny' />
-);
-*/
-
 class Root extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -43,16 +35,6 @@ class Root extends React.PureComponent {
         name: 'Network',
         component: Network,
         path: '/network',
-      },
-      {
-        name: 'Mining',
-        component: Dashboard,
-        path: '/mining',
-      },
-      {
-        name: 'About',
-        component: Dashboard,
-        path: '/about',
       },
     ];
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Header, Dimmer, List, Divider } from 'semantic-ui-react';
+import { Container, Header, Dimmer, List, Divider, Segment } from 'semantic-ui-react';
 // import { PieChart } from 'react-d3-basic';
 // import { ResponsiveOrdinalFrame } from 'semiotic';
 
@@ -49,7 +49,6 @@ class Wallet extends React.PureComponent {
     });
   }
 
-
   async refresh() {
     try {
       await Promise.all([
@@ -74,7 +73,7 @@ class Wallet extends React.PureComponent {
           </Container>
         </Dimmer>
       );
-    } else if (!this.state.unspent || !this.state.info) {
+    } else if (!this.state.unspent || !this.state.info || !this.state.ticker) {
       return (<BigLoader />);
     }
 
@@ -93,47 +92,77 @@ class Wallet extends React.PureComponent {
       return a;
     }, {});
 
+    const { balance, stake } = this.state.info;
+    const totalBtc = (balance + stake) * this.state.ticker.price_btc;
+    const totalFiat = (balance + stake) * this.state.ticker.price_usd;
+
     return (
       <Container style={{ padding: '1rem' }}>
-        <Header textAlign="center" size="huge">
-          Wallet balances
-          <Header.Subheader>
-            {this.state.info.balance} GRC Available
-          </Header.Subheader>
-          <Header.Subheader>
-            {this.state.info.stake} GRC Staked
-          </Header.Subheader>
-        </Header>
+        <Segment vertical basic textAlign="center">
+          <List relaxed size="huge" horizontal style={{ margin: '0 auto' }}>
+            <List.Item>
+              <List.Icon name="currency" />
+              <List.Content>
+                <List.Header>Available</List.Header>
+                {balance.toFixed(2)}
+              </List.Content>
+            </List.Item>
+            <List.Item>
+              <List.Icon name="line graph" />
+              <List.Content>
+                <List.Header>Staked</List.Header>
+                {stake.toFixed(2)}
+              </List.Content>
+            </List.Item>
+            <List.Item>
+              <List.Icon name="bitcoin" />
+              <List.Content>
+                <List.Header>Total (BTC)</List.Header>
+                {totalBtc.toFixed(6)}
+              </List.Content>
+            </List.Item>
+            <List.Item>
+              <List.Icon name="currency" />
+              <List.Content>
+                <List.Header>Total (USD)</List.Header>
+                ${totalFiat.toFixed(2)}
+              </List.Content>
+            </List.Item>
+          </List>
+        </Segment>
         <Divider />
-        <List size="huge">
-          {
-            Object.entries(balances).map(([accName, acc]) => (
-              <List.Item key={`account-${accName}`}>
-                {/* <List.Icon name="folder" /> */}
-                <List.Content>
-                  <List.Header>{accName || 'default'}</List.Header>
-                  <List.List>
-                    {
-                      Object.entries(acc).map(([address, transactions]) => (
-                        <List.Item key={`address-${address}`}>
-                          <List.Icon name="currency" />
-                          <List.Content>
-                            <List.Header>
-                              {address}
-                            </List.Header>
-                            <List.Description>
-                              {transactions.balance.toFixed(2)} GRC
-                            </List.Description>
-                          </List.Content>
-                        </List.Item>
-                      ))
-                    }
-                  </List.List>
-                </List.Content>
-              </List.Item>
-            ))
-          }
-        </List>
+        <Segment vertical basic>
+          <Header size="large" textAlign="center">Balances</Header>
+          <List size="huge">
+            {
+              Object.entries(balances).map(([accName, acc]) => (
+                <List.Item key={`account-${accName}`}>
+                  {/* <List.Icon name="folder" /> */}
+                  <List.Content>
+                    <List.Header>{accName || 'default'}</List.Header>
+                    <List.List>
+                      {
+                        Object.entries(acc).map(([address, transactions]) => (
+                          <List.Item key={`address-${address}`}>
+                            <List.Icon name="currency" />
+                            <List.Content>
+                              <List.Header>
+                                {address}
+                              </List.Header>
+                              <List.Description>
+                                {transactions.balance.toFixed(2)} GRC
+                              </List.Description>
+                            </List.Content>
+                          </List.Item>
+                        ))
+                      }
+                    </List.List>
+                  </List.Content>
+                </List.Item>
+              ))
+            }
+          </List>
+        </Segment>
       </Container>
     );
   }
