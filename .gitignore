@@ -2,4 +2,6 @@
 node_modules/
 semantic/
 package-lock.json
-
+bundle.js
+config/development.json
+config/production.json

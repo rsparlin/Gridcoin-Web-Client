@@ -8,6 +8,7 @@ class GrcWebClient {
 	 */
 	constructor() {
 		this.pkg = require('../package.json');
+		this.geo = new Geolocation();
 	}
 
 	/**
@@ -29,15 +30,82 @@ class GrcWebClient {
 
 		/* Routes for allowed methods that take no arguments */
 		server.route([
-			'ping',
-			'getinfo'
+			'getinfo', 'getmininginfo', 'getnettotals'
 		].map((method) => ({
 			method: 'GET',
 			path: `/api/${method}`,
-			config: {
+			options: {
 				handler: async (req, h) => (h.response(await this.request(method)))
 			}
 		})));
+
+		/* Server method for IP geolocation */
+		server.method('geolocate', (ip) => (this.geo.locate(ip)), {
+			cache: {
+				expiresIn: 24 * 60 * 60 * 1000,
+				generateTimeout: 2000
+			}
+		});
+
+		/* Routes for more complicated methods */
+		server.route([
+			{
+				method: 'GET',
+				path: '/api/getSummary',
+				options: {
+					handler: async (req, h) => {
+						const [ info, mininginfo, nettotals, recent ] = await Promise.all([
+							this.request('getinfo'),
+							this.request('getmininginfo'),
+							this.request('getnettotals'),
+							this.request('listtransactions', [ '', 10 ], 30 * 1000)
+						]);
+
+						const txdata = await Promise.all(recent.result.map(e => (
+							this.request('gettransaction', [ e.txid ], 10 * 1000)
+						)));
+
+						return h.response({
+							info: info.result,
+							mininginfo: mininginfo.result,
+							recent: recent.result,
+							nettotals: nettotals.result,
+							txinfo: txdata.reduce((a, v) => {
+								a[v.result.txid] = v.result;
+								return a;
+							}, {})
+						});
+					}
+				}
+			},
+			{
+				method: 'GET',
+				path: '/api/getpeerinfo',
+				options: {
+					handler: async (req, h) => {
+						const peers = await this.request('getpeerinfo');
+
+						await Promise.all(peers.result.map(async (e) => {
+							const geo = await req.server.methods.geolocate(e.addr.split(':')[0]);
+							e.country = geo.country_code;
+							return e;
+						}));
+
+						return h.response(peers);
+					}
+				}
+			},
+			{
+				method: 'GET',
+				path: '/api/getblockstats',
+				options: {
+					/* https://github.com/gridcoin/Gridcoin-Research/wiki/Block-Stats-Command */
+					handler: async (req, h) => (
+						h.response(await this.request('getblockstats', [ 1, 1000 ], 10 * 60 * 1000))
+					)
+				}
+			}
+		]);
 	}
 
 	/**
