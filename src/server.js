@@ -13,14 +13,16 @@ const appConfig = {
     username: config.get('rpc.username'),
     password: config.get('rpc.password'),
   },
+  reverseDns: config.get('reverseDns'),
+  geolocate: config.get('geolocate'),
 };
 
 /* Create server */
 console.log('Starting web server...');
 
 const server = new Hapi.Server({
-//  host: 'localhost',
-  port: process.env.PORT || 8080,
+  host: process.env.GWC_HOST || 'localhost',
+  port: process.env.GWC_PORT || 8080,
 });
 
 /* Load plugins */

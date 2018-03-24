@@ -19,7 +19,6 @@ class Wallet extends React.PureComponent {
 
   async componentDidMount() {
     this.refresh();
-    this.getTicker();
   }
 
   componentWillUnmount() {
@@ -54,10 +53,9 @@ class Wallet extends React.PureComponent {
       await Promise.all([
         this.listUnspent(),
         this.getInfo(),
+        this.getTicker(),
       ]);
     } catch (e) {
-      console.error(e);
-
       this.setState({
         error: true,
       });
@@ -69,7 +67,7 @@ class Wallet extends React.PureComponent {
       return (
         <Dimmer active>
           <Container>
-            <Header size="huge" inverted>beep boop beep</Header>
+            <Header size="huge" inverted>{this.state.error.toString()}</Header>
           </Container>
         </Dimmer>
       );
@@ -101,7 +99,7 @@ class Wallet extends React.PureComponent {
         <Segment vertical basic textAlign="center">
           <List relaxed size="huge" horizontal style={{ margin: '0 auto' }}>
             <List.Item>
-              <List.Icon name="currency" />
+              <List.Icon name="money" />
               <List.Content>
                 <List.Header>Available</List.Header>
                 {balance.toFixed(2)}
@@ -110,7 +108,7 @@ class Wallet extends React.PureComponent {
             <List.Item>
               <List.Icon name="line graph" />
               <List.Content>
-                <List.Header>Staked</List.Header>
+                <List.Header>Stake</List.Header>
                 {stake.toFixed(2)}
               </List.Content>
             </List.Item>
@@ -122,7 +120,7 @@ class Wallet extends React.PureComponent {
               </List.Content>
             </List.Item>
             <List.Item>
-              <List.Icon name="currency" />
+              <List.Icon name="money" />
               <List.Content>
                 <List.Header>Total (USD)</List.Header>
                 ${totalFiat.toFixed(2)}
@@ -144,7 +142,7 @@ class Wallet extends React.PureComponent {
                       {
                         Object.entries(acc).map(([address, transactions]) => (
                           <List.Item key={`address-${address}`}>
-                            <List.Icon name="currency" />
+                            <List.Icon name="money" />
                             <List.Content>
                               <List.Header>
                                 {address}

@@ -154,19 +154,23 @@ class GrcWebClient {
             const proms = [];
 
             /* Reverse DNS lookup peers */
-            proms.push(...peers.result.map(async (e) => {
-              try {
-                e.addr_rev = await req.server.methods.reverseDns(e.addr.split(':')[0]);
-              } catch (err) {
-                console.warn(err);
-              }
-            }));
+            if (this.config.reverseDns) {
+              proms.push(...peers.result.map(async (e) => {
+                try {
+                  e.addr_rev = await req.server.methods.reverseDns(e.addr.split(':')[0]);
+                } catch (err) {
+                  console.warn(err);
+                }
+              }));
+            }
 
             /* Geolocate peers */
-            proms.push(...peers.result.map(async (e) => {
-              const geo = await req.server.methods.geolocate(e.addr.split(':')[0]);
-              e.country = geo.country_code;
-            }));
+            if (this.config.geolocate) {
+              proms.push(...peers.result.map(async (e) => {
+                const geo = await req.server.methods.geolocate(e.addr.split(':')[0]);
+                e.country = geo.country_code;
+              }));
+            }
 
             await Promise.all(proms);
 

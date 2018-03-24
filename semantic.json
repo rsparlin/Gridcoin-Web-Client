@@ -2,7 +2,6 @@
   "base": "semantic/",
   "paths": {
     "source": {
-      "config": "src/theme.config",
       "definitions": "src/definitions/",
       "site": "src/site/",
       "themes": "src/themes/"
@@ -69,5 +68,5 @@
     "state",
     "visibility"
   ],
-  "version": "2.3.0"
+  "version": "2.3.1"
 }

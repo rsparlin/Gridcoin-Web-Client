@@ -51,7 +51,7 @@ class Network extends React.PureComponent {
             <List.Item key={e.addr}>
               <List.Content>
                 <List.Header style={{ wordBreak: 'break-all' }}>
-                  <Flag name={e.country.toLowerCase()} />
+                  {e.country ? <Flag name={e.country.toLowerCase()} /> : ''}
                   {e.addr_rev || e.addr.split(':')[0]}
                 </List.Header>
                 <List.Description>
@@ -93,7 +93,6 @@ class Network extends React.PureComponent {
 
       return a;
     }, []);
-    console.log('Region counts:', regionCountsArray);
 
     const renderCustomizedLabel = (params) => {
       const {
@@ -114,37 +113,15 @@ class Network extends React.PureComponent {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <PieChart>
-          {/* <Pie
-            nameKey="name"
-            dataKey="count"
-            isAnimationActive={false}
-            data={[{
-              name: 'Total',
-              count: regionCountsArray.reduce((a, v) => (a + v.count), 0),
-            }]}
-            label
-            outerRadius="0%"
-            strokeWidth={0}
-            fill="transparent"
-          /> */ }
           <Pie
             stroke="white"
             nameKey="country"
             dataKey="count"
             animationBegin={0}
             animationDuration={750}
-            strokeWidth={2}
+            strokeWidth={1}
             isAnimationActive
             data={regionCountsArray}
-            /* label={{
-              fontWeight: 'bold',
-              fill: 'white',
-              textAnchor: 'middle',
-            }}
-            labelLine={{
-              stroke: 'rgba(255, 255, 255, 1)',
-              strokeWidth: 1,
-            }} */
             label={false}
             innerRadius="0%"
           >
@@ -202,10 +179,8 @@ class Network extends React.PureComponent {
     try {
       await this.getPeerInfo();
     } catch (e) {
-      console.error(e);
-
       this.setState({
-        error: true,
+        error: e,
       });
     }
   }
@@ -215,13 +190,16 @@ class Network extends React.PureComponent {
       return (
         <Dimmer active>
           <Container>
-            <Header size="huge" inverted>beep boop beep</Header>
+            <Header size="huge" inverted>{this.state.error.toString()}</Header>
           </Container>
         </Dimmer>
       );
     } else if (!this.state.peers) {
       return (<BigLoader />);
     }
+
+    const peersIn = this.state.peers.filter(e => e.inbound).length;
+    const peersOut = this.state.peers.filter(e => !e.inbound).length;
 
     return (
       <Segment vertical basic>
@@ -239,28 +217,14 @@ class Network extends React.PureComponent {
               </Header>
               <Segment vertical basic>
                 {this.makeRegionChart()}
-                {/* <List>
-                  {((peers) => {
-                    const countryCounts = peers.reduce((a, { country }) => {
-                      a[country] = (a[country] || 0) + 1; // eslint-disable-line no-param-reassign
-                      return a;
-                    }, {});
-
-                    return Object.keys(countryCounts).map(country => (
-                      <List.Item key={country}>
-                        <List.Content>
-                          <List.Header>{country}</List.Header>
-                          {countryCounts[country]}
-                        </List.Content>
-                      </List.Item>
-                    ));
-                  })(this.state.peers)}
-                </List> */}
               </Segment>
             </Grid.Column>
             <Grid.Column>
               <Header size="large" textAlign="center">
-                Peers
+                Peers ({this.state.peers.length})
+                <Header.Subheader>
+                  {peersIn} inbound, {peersOut} outbound
+                </Header.Subheader>
               </Header>
               <Segment vertical basic>
                 {this.makePeerList()}

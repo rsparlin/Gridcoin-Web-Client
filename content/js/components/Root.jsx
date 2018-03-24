@@ -69,7 +69,7 @@ class Root extends React.PureComponent {
 
     return (
       <div>
-        <Responsive as="div" minWidth={768}>
+        <Responsive as="div" minWidth={1024}>
           <Menu borderless fixed="left" vertical>
             {navItems}
           </Menu>
@@ -77,7 +77,7 @@ class Root extends React.PureComponent {
             {content}
           </div>
         </Responsive>
-        <Responsive as="div" maxWidth={767}>
+        <Responsive as="div" maxWidth={1023}>
           <Menu borderless fixed="top">
             {navItems}
           </Menu>

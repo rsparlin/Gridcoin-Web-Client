@@ -3,5 +3,7 @@
 		"baseurl": "",
 		"username": "",
 		"password": ""
-	}
+	},
+	"reverseDns": true,
+	"geolocate": true
 }

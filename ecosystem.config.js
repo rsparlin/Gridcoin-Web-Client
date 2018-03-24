@@ -10,11 +10,13 @@ module.exports = {
       watch: ['src/'],
 
       env: {
-        WEB_PORT: '8080',
+        GWC_HOST: 'localhost',
+        GWC_PORT: '8080',
         NODE_ENV: 'development',
       },
       env_production: {
-        WEB_PORT: '5000',
+        GWC_HOST: 'localhost',
+        GWC_PORT: '5000',
         NODE_ENV: 'production',
         watch: false,
       },

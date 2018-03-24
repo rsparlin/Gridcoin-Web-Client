@@ -1,7 +1,7 @@
 {
 	"name": "GridcoinWebClient",
 	"description": "",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"contributors": [
 		"Ryan Sparlin"
 	],
@@ -9,10 +9,8 @@
 	"dependencies": {
 		"boom": "^7.1.1",
 		"config": "^1.26.2",
-		"flag-icon-css": "^2.9.0",
 		"hapi": "^17.2.0",
 		"inert": "^5.1.0",
-		"npm": "^5.6.0",
 		"prop-types": "^15.6.0",
 		"react": "^15.6.2",
 		"react-dom": "^15.6.2",
@@ -21,11 +19,11 @@
 		"recharts": "^1.0.0-beta.10",
 		"request": "^2.83.0",
 		"request-promise-native": "^1.0.5",
-		"semantic": "0.0.1",
-		"semantic-ui": "^2.3.0",
+		"semantic-ui": "^2.3.1",
+		"semantic-ui-less": "^2.3.1",
 		"semantic-ui-react": "^0.74.2"
 	},
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"private": true,
 	"devDependencies": {
 		"babel-eslint": "^8.2.1",
@@ -33,8 +31,12 @@
 		"babel-minify-webpack-plugin": "^0.2.0",
 		"babel-preset-es2015": "^6.24.1",
 		"babel-preset-react": "^6.24.1",
+		"eslint": "^4.19.1",
+		"eslint-config-airbnb": "^16.1.0",
 		"eslint-plugin-html": "^4.0.2",
-		"eslint-plugin-react": "^7.6.1",
+		"eslint-plugin-import": "^2.9.0",
+		"eslint-plugin-jsx-a11y": "^6.0.3",
+		"eslint-plugin-react": "^7.7.0",
 		"moment": "^2.20.1",
 		"uglify-es": "^3.3.8",
 		"uglifyjs-webpack-plugin": "^1.1.6",
