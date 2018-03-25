@@ -33,7 +33,7 @@ export default class Dashboard extends React.PureComponent {
 
     this.setState({
       info: res.info,
-      mininginfo: res.mininginfo,
+      miningInfo: res.mininginfo,
       recentTrans: res.recent,
       nettotals: res.nettotals,
       blocks: res.blocks,
@@ -99,7 +99,7 @@ export default class Dashboard extends React.PureComponent {
                 <List.Header>Stake</List.Header>
                 <span style={{ color: (this.state.info.stake > 0 ? 'green' : '') }}>
                   {(() => {
-                    if (!this.state.mininginfo.staking) return 'Locked';
+                    if (!this.state.miningInfo.staking) return 'Locked';
                     else if (this.state.info.stake > 0) return this.state.info.stake.toFixed(2);
                     return 'Not staking';
                   })()}
@@ -113,6 +113,21 @@ export default class Dashboard extends React.PureComponent {
           <Grid container columns="equal" stackable>
             <Grid.Row>
               <Grid.Column>
+                <Header size="large" textAlign="center">Mining</Header>
+                <List relaxed size="large">
+                  <List.Item header="CPID" content={this.state.miningInfo.CPID} />
+                  <List.Item header="Pending Interest" content={this.state.miningInfo.InterestPending} />
+                  <List.Item header="Pending Boinc Reward" content={this.state.miningInfo.BoincRewardPending} />
+                  <List.Item>
+                    <List.Header>
+                      Est. time to stake
+                    </List.Header>
+                    <Moment add={{ seconds: this.state.miningInfo.expectedtime }} fromNow>
+                      {new Date()}
+                    </Moment>
+                  </List.Item>
+                </List>
+
                 <Header size="large" textAlign="center">
                   Network
                   {this.state.info.testnet ? '(Testnet)' : ''}
