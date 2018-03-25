@@ -1,4 +1,4 @@
-# Gridcoin Web Client
+# Gridcoin Web Client [![CircleCI](https://circleci.com/gh/rsparlin/Gridcoin-Web-Client.svg?style=svg)](https://circleci.com/gh/rsparlin/Gridcoin-Web-Client)
 
 The original intent of this project was to provide a decent GUI for a headless Gridcoin Research (GRC) node (e.g. a Raspberry Pi), but it works just as well on workstations.
 
