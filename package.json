@@ -44,6 +44,7 @@
 	},
 	"scripts": {
 		"start": "node src/server.js",
+		"test": "eslint src/ content/js/",
 		"build-dev": "NODE_ENV=development webpack",
 		"build-prod": "NODE_ENV=production webpack"
 	}
