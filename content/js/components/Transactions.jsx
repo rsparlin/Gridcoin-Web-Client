@@ -3,8 +3,6 @@ import { Container, Segment, Header, Dimmer, Table, Visibility, Loader } from 's
 // import { PieChart } from 'react-d3-basic';
 // import { ResponsiveOrdinalFrame } from 'semiotic';
 
-import Moment from 'react-moment';
-
 import BigLoader from './BigLoader.jsx';
 import GrcApi from '../GrcApi';
 

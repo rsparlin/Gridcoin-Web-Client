@@ -1,6 +1,10 @@
 {
 	"name": "GridcoinWebClient",
-	"description": "",
+	"description": " A web interface for the Gridcoin Research daemon.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rsparlin/Gridcoin-Web-Client.git"
+	},
 	"version": "0.1.0",
 	"contributors": [
 		"Ryan Sparlin"
@@ -44,7 +48,7 @@
 	},
 	"scripts": {
 		"start": "node src/server.js",
-		"test": "eslint src/ content/js/",
+		"test": "eslint --ext js --ext jsx src/ content/js",
 		"build-dev": "NODE_ENV=development webpack",
 		"build-prod": "NODE_ENV=production webpack"
 	}
