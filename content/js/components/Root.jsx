@@ -67,10 +67,18 @@ class Root extends React.PureComponent {
       </Switch>
     );
 
+    const vertMenuStyle = {
+      background: 'url("content/GRCVertical_Purple_Transparent.png")',
+      backgroundSize: '80%',
+      backgroundRepeat: 'no-repeat',
+      backgroundPositionY: '99%',
+      backgroundPositionX: '50%',
+    };
+
     return (
       <div>
         <Responsive as="div" minWidth={1024}>
-          <Menu borderless fixed="left" vertical>
+          <Menu borderless fixed="left" vertical style={vertMenuStyle}>
             {navItems}
           </Menu>
           <div style={{ height: '100%', marginLeft: '15rem' }}>
