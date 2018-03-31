@@ -27,11 +27,23 @@ I _strongly_ encourage you to only allow RPC from localhost. Change `rpcallowip`
 
 Installation is fairly straightforward. Just clone or otherwise download a copy of this repository. After that you need to package the front-end code with webpack.
 
+#### Bash (Linux, OSX, etc.)
+
 ```
 $ git clone https://github.com/rsparlin/Gridcoin-Web-Client.git
 $ cd Gridcoin-Web-Client
 $ npm install
 $ npm run build-prod
+```
+
+#### Windows (command prompt)
+
+```
+> git clone https://github.com/rsparlin/Gridcoin-Web-Client.git
+> cd Gridcoin-Web-Client
+> npm install
+> set NODE_ENV=production
+> .\node_modules\.bin\webpack
 ```
 
 ### Configuration
@@ -63,17 +75,13 @@ The following are the available options:
 
 ### Starting
 
+#### Using PM2
+
 To keep the server running, I recommend using [PM2](http://pm2.keymetrics.io/). To that end, you can use the provided `ecosystem.config.js` file. Modify it to your liking and then start it under the `production` environment.
 
 ```
 $ sudo npm install -g pm2
 $ pm2 start ecosystem.config.js --env production
-```
-
-You can also just run it directly. You can specify the IP and port to bind on if you dislike the defaults (localhost on 8080). The following will work in Bash (sorry Windows users):
-
-```
-$ NODE_ENV=production GWC_HOST=localhost GWC_PORT=8080 npm start
 ```
 
 Having PM2 launch on boot is also nice to have. See the [relevant documentation](http://pm2.keymetrics.io/docs/usage/startup/) for how to do that. For the lazy, the following should get you going:
@@ -82,6 +90,27 @@ Having PM2 launch on boot is also nice to have. See the [relevant documentation]
 $ pm2 start ecosystem.config.js --env production
 $ pm2 save
 $ sudo pm2 startup -u "$(whoami)" --hp "$HOME"
+```
+
+Note that the above will not work on Windows. The [PM2 docs](http://pm2.keymetrics.io/docs/usage/startup/#windows-consideration) acknowledge this and provide recommendations.
+
+#### Without PM2
+
+You can also just run the server directly. You can specify the IP and port to bind on if you dislike the defaults (localhost on 8080).
+
+Bash:
+
+```
+$ NODE_ENV=production GWC_HOST=localhost GWC_PORT=8080 npm start
+```
+
+Windows command prompt:
+
+```
+> set NODE_ENV=production
+> set GWC_PORT=8080
+> set GWC_HOST=localhost
+> npm start
 ```
 
 ## Built With
