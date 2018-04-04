@@ -74,7 +74,7 @@ class Network extends React.PureComponent {
 
           return block ? (
             <span style={{ textTransform: 'capitalize' }}>
-              {block.ResearchSubsidy ? 'DPoR' : 'Interest'}
+              {block.ResearchSubsidy ? `DPoR (mag = ${block.Magnitude})` : 'Interest'}
             </span>
           ) : (
             <span style={{ textTransform: 'capitalize' }}>
