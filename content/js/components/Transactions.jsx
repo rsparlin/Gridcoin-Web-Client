@@ -39,7 +39,7 @@ class Network extends React.PureComponent {
       });
     } catch (e) {
       this.setState({
-        error: true,
+        error: e,
       });
     }
 
