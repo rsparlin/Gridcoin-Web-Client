@@ -1,8 +1,10 @@
 const rp = require('request-promise-native'); /* https://github.com/request/request-promise-native */
 const Boom = require('boom'); /* https://github.com/hapijs/boom */
 const Geolocation = require('./geoip');
-const pkg = require('../package.json');
 const dns = require('dns');
+
+const pkg = require('../package.json');
+const BoincCmd = require('./BoincCmd.js');
 
 class GrcWebClient {
   /**
@@ -20,6 +22,9 @@ class GrcWebClient {
   register(server, options) {
     /* Save reference to config */
     this.config = options;
+
+    /* Create boinccmd helper */
+    this.bc = new BoincCmd(this.config.boinc.boinccmd);
 
     /* Create cache */
     this.cache = {
@@ -185,6 +190,39 @@ class GrcWebClient {
           /* https://github.com/gridcoin/Gridcoin-Research/wiki/Block-Stats-Command */
           handler: async (req, h) => (
             h.response(await this.request('getblockstats', [1, 1000], 10 * 60 * 1000))
+          ),
+        },
+      },
+    ]);
+
+    /* Server method & routes for BOINC commands */
+    server.method('getBoincHost', async (host) => {
+      try {
+        return {
+          [host.hostname]: {
+            info: await this.bc.getHostInfo(host.hostname, host.password),
+            tasks: await this.bc.getTasks(host.hostname, host.password),
+          },
+        };
+      } catch (e) {
+        return { [host.hostname]: { error: e.stderr } };
+      }
+    }, {
+      cache: {
+        expiresIn: 30 * 1000,
+        generateTimeout: 10000,
+      },
+      generateKey: host => host.hostname,
+    });
+
+    server.route([
+      {
+        method: 'GET',
+        path: '/api/boinc/gethostinfo',
+        options: {
+          handler: async (req, h) => (
+            h.response((await Promise.all(this.config.boinc.hosts.map(host =>
+              req.server.methods.getBoincHost(host)))).reduce((a, v) => Object.assign(a, v), {}))
           ),
         },
       },

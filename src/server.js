@@ -13,6 +13,10 @@ const appConfig = {
     username: config.get('rpc.username'),
     password: config.get('rpc.password'),
   },
+  boinc: {
+    boinccmd: config.get('boinc.boinccmd'),
+    hosts: config.get('boinc.hosts'),
+  },
   reverseDns: config.get('reverseDns'),
   geolocate: config.get('geolocate'),
 };

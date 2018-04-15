@@ -7,6 +7,7 @@ import Dashboard from './Dashboard.jsx';
 import Network from './Network.jsx';
 import Transactions from './Transactions.jsx';
 import Wallet from './Wallet.jsx';
+import Boinc from './Boinc.jsx';
 
 class Root extends React.PureComponent {
   constructor(props) {
@@ -35,6 +36,11 @@ class Root extends React.PureComponent {
         name: 'Network',
         component: Network,
         path: '/network',
+      },
+      {
+        name: 'BOINC',
+        component: Boinc,
+        path: '/boinc',
       },
     ];
 

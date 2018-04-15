@@ -40,4 +40,16 @@ export default class GrcApi {
   static getTicker() {
     return GrcApi.request('getTicker');
   }
+
+  static async getBoincHosts() {
+    const raw = await fetch('api/boinc/gethostinfo', {
+      method: 'GET',
+      mode: 'cors',
+      json: true,
+    });
+
+    const res = await raw.json();
+    if (res.error) throw res.error;
+    return res;
+  }
 }
