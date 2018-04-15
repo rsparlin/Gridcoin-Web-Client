@@ -199,13 +199,16 @@ class GrcWebClient {
     server.method('getBoincHost', async (host) => {
       try {
         return {
-          [host.hostname]: {
-            info: await this.bc.getHostInfo(host.hostname, host.password),
-            tasks: await this.bc.getTasks(host.hostname, host.password),
-          },
+          hostname: host.hostname,
+          info: await this.bc.getHostInfo(host.hostname, host.password),
+          tasks: await this.bc.getTasks(host.hostname, host.password),
+          projects: await this.bc.getProjects(host.hostname, host.password),
         };
       } catch (e) {
-        return { [host.hostname]: { error: e.stderr } };
+        return {
+          hostname: host.hostname,
+          error: e.stderr,
+        };
       }
     }, {
       cache: {
@@ -222,7 +225,7 @@ class GrcWebClient {
         options: {
           handler: async (req, h) => (
             h.response((await Promise.all(this.config.boinc.hosts.map(host =>
-              req.server.methods.getBoincHost(host)))).reduce((a, v) => Object.assign(a, v), {}))
+              req.server.methods.getBoincHost(host)))))
           ),
         },
       },

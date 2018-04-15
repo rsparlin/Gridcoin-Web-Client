@@ -72,8 +72,9 @@ class BoincCmd {
     return sections;
   }
 
-  async getState(host, password) {
-    return BoincCmd.parseOutput(await this.execute(host, password, '--get_state'));
+  async getProjects(host, password) {
+    const raw = (await this.execute(host, password, '--get_project_status')).replace(/^GUI URL:$(?:\n^.*$){3}/mg, '');
+    return BoincCmd.parseOutput(raw).Projects;
   }
 
   async getHostInfo(host, password) {
