@@ -61,6 +61,19 @@ I highly recommend you `chmod 600` your configuration files to prevent other use
 		"username": "your_user",
 		"password": "your_password"
 	},
+	"boinc": {
+		"boinccmd": "/usr/bin/boinccmd",
+		"hosts": [
+			{
+				"hostname": "localhost",
+				"password": "boincpassword"
+			},
+			{
+				"hostname": "raspberry-pi",
+				"password": "boincpassword"
+			}
+		]
+	},
 	"reverseDns": true,
 	"geolocate": true
 }
@@ -70,6 +83,8 @@ The following are the available options:
 
 - `rpc.baseurl` -- This should be set to the URL for your gridcoinresearchd RPC server. Typically all you will need to do for this is change the port.
 - `rpc.username` and `rpc.password` -- These should match the `rpcuser` and `rpcpassword` values in your `gridcoinresearch.conf`.
+- `boinc.boinccmd` -- Path to boinccmd executable.
+- `boinc.hosts` -- A JSON array of BOINC hosts, each with a `hostname` and `password`.
 - `reverseDns` -- When this is true, peers' IP addresses will be resolved to hostnames through DNS. This may slow the initial loading of the peer list.
 - `geolocate` -- When this is true, peers' locations will be determined using [freegeoip](https://freegeoip.net/). This may also slow the initial loading of the peer list.
 
