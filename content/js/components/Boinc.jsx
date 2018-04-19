@@ -71,10 +71,18 @@ class Boinc extends React.PureComponent {
                     size="small"
                     active={task.active_task_state === 'EXECUTING'}
                     success={task['ready to report'] === 'yes'}
-                    percent={(Number(task['fraction done']) * 100).toPrecision(2)}
+                    percent={task['ready to report'] === 'yes' ? 100 : (Number(task['fraction done']) * 100).toPrecision(4)}
                     progress="percent"
                   >
-                    {task.name} &mdash; due <Moment fromNow date={new Date(Date.parse(task['report deadline']))} />
+                    {task['ready to report'] === 'yes' ? (
+                      <span>
+                        {task.name} &mdash; ready to report
+                      </span>
+                    ) : (
+                      <span>
+                        {task.name} &mdash; due <Moment fromNow date={new Date(Date.parse(task['report deadline']))} />
+                      </span>
+                    )}
                   </Progress>
                 </List.Content>
               </List.Item>
