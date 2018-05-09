@@ -9,9 +9,7 @@ class Boinc extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
-      error: false,
-    };
+    this.state = {};
 
     this.refreshInterval = window.setInterval(() => this.refresh(), 10000);
   }
@@ -44,7 +42,7 @@ class Boinc extends React.PureComponent {
       return (
         <Dimmer active>
           <Container>
-            <Header size="huge" inverted>{this.state.error.toString()}</Header>
+            <Header size="huge" inverted>{error.toString()}</Header>
           </Container>
         </Dimmer>
       );
@@ -92,21 +90,32 @@ class Boinc extends React.PureComponent {
       );
     };
 
-    const Host = ({ host }) => {
+    const Host = (host) => {
+      if (host.host.error) {
+        return (
+          <Item>
+            <Item.Content>
+              <Item.Header>{host.hostname}</Item.Header>
+              <Item.Description>{host.host.error}</Item.Description>
+            </Item.Content>
+          </Item>
+        );
+      }
+
       const {
-        hostname,
         info,
         tasks,
         projects,
-      } = host;
+      } = host.host;
+
       const memoryGib = (Number(info['mem size']) / 1024 / 1024 / 1024).toFixed(1);
       const hostProjects = (projects && projects.length) ? projects.map(p => p.name).join(', ') : 'None';
       const hostRac = (projects) ? projects.reduce((a, p) => (a + Number(p.host_expavg_credit)), 0).toLocaleString() : 'N/A';
 
       return (
-        <Item key={`host-${hostname}`}>
+        <Item>
           <Item.Content>
-            <Item.Header>{hostname}</Item.Header>
+            <Item.Header>{info['domain name']}</Item.Header>
             <Item.Meta>Operating System: {info['OS name']}</Item.Meta>
             <Item.Meta>Memory: {memoryGib} GiB</Item.Meta>
             <Item.Meta>CPU Model: {info['CPU model']}</Item.Meta>
