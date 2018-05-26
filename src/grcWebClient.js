@@ -104,7 +104,7 @@ class GrcWebClient {
             if (Number.isNaN(amount) || Number.isNaN(from)) throw Boom.badRequest();
 
             const transactions = await this.request('listtransactions', [
-              '', amount, from,
+              '', amount, from, true,
             ]);
 
             const blocks = await Promise.all(transactions.result.filter(e => e.generated).map(e => (
@@ -131,7 +131,7 @@ class GrcWebClient {
               this.request('getmininginfo'),
               this.request('getnetworkinfo'),
               this.request('getnettotals'),
-              this.request('listtransactions', ['', 10], 30 * 1000),
+              this.request('listtransactions', ['', 10], 30 * 1000, true),
             ]);
 
             const blocks = await Promise.all(recent.result.filter(e => e.generated).map(e => (
