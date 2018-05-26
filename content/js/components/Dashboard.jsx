@@ -171,7 +171,11 @@ export default class Dashboard extends React.PureComponent {
                         <List.Item key={e.txid}>
                           <List.Content>
                             <List.Header>
-                              {block ? genType : e.Type} &mdash; {e.account || e.address}
+                              {block ? genType : (
+                                <span style={{ textTransform: 'capitalize' }}>
+                                  {e.category}
+                                </span>
+                              )} &mdash; {e.account || e.address}
                             </List.Header>
                             {(block ? (`${block.Interest.toFixed(2)} + ${block.ResearchSubsidy.toFixed(2)} (DPoR)`) : e.amount.toFixed(2))}
                             <List.Description>
