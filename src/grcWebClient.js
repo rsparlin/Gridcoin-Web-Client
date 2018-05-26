@@ -126,9 +126,10 @@ class GrcWebClient {
         path: '/api/getSummary',
         options: {
           handler: async (req, h) => {
-            const [info, mininginfo, nettotals, recent] = await Promise.all([
-              this.request('getinfo'),
+            const [walletinfo, mininginfo, networkinfo, nettotals, recent] = await Promise.all([
+              this.request('getwalletinfo'),
               this.request('getmininginfo'),
+              this.request('getnetworkinfo'),
               this.request('getnettotals'),
               this.request('listtransactions', ['', 10], 30 * 1000),
             ]);
@@ -138,10 +139,11 @@ class GrcWebClient {
             )));
 
             return h.response({
-              info: info.result,
+              walletinfo: walletinfo.result,
               mininginfo: mininginfo.result,
-              recent: recent.result,
+              networkinfo: networkinfo.result,
               nettotals: nettotals.result,
+              recent: recent.result,
               blocks: blocks.reduce((a, v) => {
                 a[v.result.hash] = v.result; // eslint-disable-line no-param-reassign
                 return a;

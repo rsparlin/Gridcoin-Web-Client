@@ -11,7 +11,6 @@ export default class Dashboard extends React.PureComponent {
 
     this.state = {
       error: false,
-      info: null,
     };
 
     this.refreshInterval = window.setInterval(() => this.refresh(), 5000);
@@ -32,10 +31,11 @@ export default class Dashboard extends React.PureComponent {
     if (res.error) throw res.error;
 
     this.setState({
-      info: res.info,
+      walletInfo: res.walletinfo,
       miningInfo: res.mininginfo,
+      networkInfo: res.networkinfo,
       recentTrans: res.recent,
-      nettotals: res.nettotals,
+      netTotals: res.nettotals,
       blocks: res.blocks,
       error: false,
     });
@@ -60,9 +60,18 @@ export default class Dashboard extends React.PureComponent {
           </Container>
         </Dimmer>
       );
-    } else if (!this.state.info) {
+    } else if (!this.state.walletInfo) {
       return (<BigLoader />);
     }
+
+    const {
+      walletInfo,
+      miningInfo,
+      networkInfo,
+      netTotals,
+      recentTrans,
+      blocks,
+    } = this.state;
 
     return (
       <Container style={{ padding: '1rem' }}>
@@ -72,15 +81,15 @@ export default class Dashboard extends React.PureComponent {
               <List.Icon name="cubes" />
               <List.Content>
                 <List.Header>Blocks</List.Header>
-                {this.state.info.blocks}
+                {miningInfo.blocks}
               </List.Content>
             </List.Item>
             <List.Item>
-              <List.Icon name={this.state.info.difficulty['proof-of-stake'] >= 0.35 ? 'check' : 'warning sign'} />
+              <List.Icon name={miningInfo.difficulty['proof-of-stake'] >= 0.35 ? 'check' : 'warning sign'} />
               <List.Content>
                 <List.Header>Difficulty</List.Header>
-                <span style={{ color: (this.state.info.difficulty['proof-of-stake'] < 0.35 ? 'red' : 'inherit') }}>
-                  {this.state.info.difficulty['proof-of-stake']}
+                <span style={{ color: (miningInfo.difficulty['proof-of-stake'] < 0.35 ? 'red' : 'inherit') }}>
+                  {miningInfo.difficulty['proof-of-stake']}
                 </span>
               </List.Content>
             </List.Item>
@@ -88,8 +97,8 @@ export default class Dashboard extends React.PureComponent {
               <List.Icon name="money" />
               <List.Content>
                 <List.Header>Balance</List.Header>
-                <span style={{ color: (this.state.info.balance > 0 ? 'green' : '') }}>
-                  {this.state.info.balance.toFixed(2)}
+                <span style={{ color: (walletInfo.balance > 0 ? 'green' : '') }}>
+                  {walletInfo.balance.toFixed(2)}
                 </span>
               </List.Content>
             </List.Item>
@@ -97,10 +106,10 @@ export default class Dashboard extends React.PureComponent {
               <List.Icon name="line graph" />
               <List.Content>
                 <List.Header>Stake</List.Header>
-                <span style={{ color: (this.state.info.stake > 0 ? 'green' : '') }}>
+                <span style={{ color: (walletInfo.stake > 0 ? 'green' : '') }}>
                   {(() => {
-                    if (!this.state.miningInfo.staking) return 'Locked';
-                    else if (this.state.info.stake > 0) return this.state.info.stake.toFixed(2);
+                    if (!walletInfo.unlocked_until) return 'Locked';
+                    else if (walletInfo.stake > 0) return walletInfo.stake.toFixed(2);
                     return 'Not staking';
                   })()}
                 </span>
@@ -115,29 +124,33 @@ export default class Dashboard extends React.PureComponent {
               <Grid.Column>
                 <Header size="large" textAlign="center">Mining</Header>
                 <List relaxed size="large">
-                  <List.Item header="CPID" content={this.state.miningInfo.CPID} />
-                  <List.Item header="Pending Interest" content={this.state.miningInfo.InterestPending} />
-                  <List.Item header="Pending Boinc Reward" content={this.state.miningInfo.BoincRewardPending} />
+                  <List.Item header="CPID" content={miningInfo.CPID} />
+                  <List.Item header="Pending Interest" content={miningInfo.InterestPending} />
+                  <List.Item header="Pending Boinc Reward" content={miningInfo.BoincRewardPending} />
                   <List.Item>
                     <List.Header>
                       Est. time to stake
                     </List.Header>
-                    <Moment add={{ seconds: this.state.miningInfo.expectedtime }} fromNow>
-                      {new Date()}
-                    </Moment>
+                    {
+                      walletInfo.unlocked_until ? (
+                        <Moment add={{ seconds: miningInfo.expectedtime }} fromNow>
+                          {new Date()}
+                        </Moment>
+                      ) : 'N/A'
+                    }
                   </List.Item>
                 </List>
 
                 <Header size="large" textAlign="center">
                   Network
-                  {this.state.info.testnet ? '(Testnet)' : ''}
+                  {miningInfo.testnet ? '(Testnet)' : ''}
                 </Header>
                 <List relaxed size="large">
-                  <List.Item header="IP Address" content={this.state.info.ip} />
-                  <List.Item header="Client Version" content={this.state.info.version} />
-                  <List.Item header="Connections" content={this.state.info.connections} />
-                  <List.Item header="Total Sent" content={`${(this.state.nettotals.totalbytessent / 1024 / 1024).toFixed(1)} MiB`} />
-                  <List.Item header="Total Received" content={`${(this.state.nettotals.totalbytesrecv / 1024 / 1024).toFixed(1)} MiB`} />
+                  <List.Item header="IP Address" content={networkInfo.ip} />
+                  <List.Item header="Client Version" content={networkInfo.version} />
+                  <List.Item header="Connections" content={networkInfo.connections} />
+                  <List.Item header="Total Sent" content={`${(netTotals.totalbytessent / 1024 / 1024).toFixed(1)} MiB`} />
+                  <List.Item header="Total Received" content={`${(netTotals.totalbytesrecv / 1024 / 1024).toFixed(1)} MiB`} />
                 </List>
               </Grid.Column>
               <Grid.Column>
@@ -148,10 +161,10 @@ export default class Dashboard extends React.PureComponent {
                   relaxed
                   size="large"
                   items={
-                    (this.state.recentTrans || []).sort((a, b) => (
+                    (recentTrans || []).sort((a, b) => (
                       a.confirmations - b.confirmations
                     )).map((e) => {
-                      const block = e.generated && this.state.blocks[e.blockhash];
+                      const block = e.generated && blocks[e.blockhash];
                       const genType = (block && block.ResearchSubsidy) ? 'DPoR' : 'Interest';
 
                       return (
