@@ -131,7 +131,7 @@ class GrcWebClient {
               this.request('getmininginfo'),
               this.request('getnetworkinfo'),
               this.request('getnettotals'),
-              this.request('listtransactions', ['', 10], 30 * 1000, true),
+              this.request('listtransactions', ['', 10, 0, true], 30 * 1000, true),
             ]);
 
             const blocks = await Promise.all(recent.result.filter(e => e.generated).map(e => (
