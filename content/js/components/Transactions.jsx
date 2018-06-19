@@ -21,9 +21,6 @@ class Network extends React.PureComponent {
     this.listTransactions();
   }
 
-  componentWillUnmount() {
-  }
-
   async listTransactions(offset = 0) {
     this.setState({ offset, loading: true });
 
@@ -53,15 +50,22 @@ class Network extends React.PureComponent {
   }
 
   render() {
-    if (this.state.error) {
+    const {
+      error,
+      loading,
+      transactions,
+      blocks,
+    } = this.state;
+
+    if (error) {
       return (
         <Dimmer active>
           <Container>
-            <Header size="huge" inverted>{this.state.error.toString()}</Header>
+            <Header size="huge" inverted>{error.toString()}</Header>
           </Container>
         </Dimmer>
       );
-    } else if (!this.state.transactions) {
+    } else if (!transactions) {
       return (<BigLoader />);
     }
 
@@ -70,7 +74,7 @@ class Network extends React.PureComponent {
         label: 'Type',
         name: 'Type',
         render: (e) => {
-          const block = e.generated && this.state.blocks[e.blockhash];
+          const block = e.generated && blocks[e.blockhash];
 
           return block ? (
             <span style={{ textTransform: 'capitalize' }}>
@@ -92,7 +96,7 @@ class Network extends React.PureComponent {
         label: 'Amount',
         name: 'amount',
         render: (e) => {
-          const block = e.generated && this.state.blocks[e.blockhash];
+          const block = e.generated && blocks[e.blockhash];
 
           if (block) {
             const research = block.ResearchSubsidy.toFixed(2);
@@ -119,40 +123,42 @@ class Network extends React.PureComponent {
 
     return (
       <Container fluid style={{ padding: '1rem' }}>
-        <Header size="huge" textAlign="center">List of Transactions</Header>
+        <Segment vertical basic>
+          <Header size="large" textAlign="center">List of Transactions</Header>
 
-        <Visibility once={false} onBottomVisible={() => this.infiniteScroll()}>
-          <Table size="large" basic="very" striped singleLine compact="very">
-            <Table.Header>
-              <Table.Row>
-                {cols.map(col => (
-                  <Table.HeaderCell key={col.name}>
-                    {col.label}
-                  </Table.HeaderCell>
-                ))}
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {this.state.transactions
-                .sort((a, b) => (a.confirmations - b.confirmations))
-                .map(tx => (
-                  <Table.Row key={`${tx.address}-${tx.txid}`}>
-                    {cols.map(col => (
-                      <Table.Cell key={col.name}>
-                        {col.render ? col.render(tx) : tx[col.name]}
-                      </Table.Cell>
-                    ))}
-                  </Table.Row>
-                ))
-              }
-            </Table.Body>
-          </Table>
-        </Visibility>
-        {!this.state.loading ? '' : (
-          <Segment basic textAlign="center">
-            <Loader inline active indeterminate />
-          </Segment>
-        )}
+          <Visibility once={false} onBottomVisible={() => this.infiniteScroll()}>
+            <Table size="large" basic="very" striped singleLine compact="very">
+              <Table.Header>
+                <Table.Row>
+                  {cols.map(col => (
+                    <Table.HeaderCell key={col.name}>
+                      {col.label}
+                    </Table.HeaderCell>
+                  ))}
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {transactions
+                  .sort((a, b) => (a.confirmations - b.confirmations))
+                  .map(tx => (
+                    <Table.Row key={`${tx.address}-${tx.txid}`}>
+                      {cols.map(col => (
+                        <Table.Cell key={col.name}>
+                          {col.render ? col.render(tx) : tx[col.name]}
+                        </Table.Cell>
+                      ))}
+                    </Table.Row>
+                  ))
+                }
+              </Table.Body>
+            </Table>
+          </Visibility>
+          {!loading ? '' : (
+            <Segment basic textAlign="center">
+              <Loader inline active indeterminate />
+            </Segment>
+          )}
+        </Segment>
       </Container>
     );
   }

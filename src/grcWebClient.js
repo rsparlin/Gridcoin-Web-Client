@@ -38,7 +38,7 @@ class GrcWebClient {
     server.method('geolocate', ip => (Geolocation.locate(ip)), {
       cache: {
         expiresIn: 24 * 60 * 60 * 1000,
-        generateTimeout: 5000,
+        generateTimeout: 10000,
       },
     });
 
@@ -51,7 +51,7 @@ class GrcWebClient {
     })), {
       cache: {
         expiresIn: 24 * 60 * 60 * 1000,
-        generateTimeout: 2000,
+        generateTimeout: 10000,
       },
     });
 
@@ -69,7 +69,7 @@ class GrcWebClient {
     }, {
       cache: {
         expiresIn: 1 * 60 * 1000,
-        generateTimeout: 5000,
+        generateTimeout: 10000,
       },
     });
 
@@ -195,6 +195,20 @@ class GrcWebClient {
           ),
         },
       },
+      {
+        method: 'GET',
+        path: '/api/getUnconfirmed',
+        options: {
+          handler: async (req, h) => (
+            h.response({
+              unconfirmed: await Promise.all((await this.request('getrawmempool', [], 1000))
+                .result
+                .map(txid => this.request('gettransaction', [txid], 5000)
+                  .then(e => e.result))),
+            })
+          ),
+        },
+      },
     ]);
 
     /* Server method & routes for BOINC commands */
@@ -215,7 +229,7 @@ class GrcWebClient {
     }, {
       cache: {
         expiresIn: 30 * 1000,
-        generateTimeout: 10000,
+        generateTimeout: 60000,
       },
       generateKey: host => host.hostname,
     });

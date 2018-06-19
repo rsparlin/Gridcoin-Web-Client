@@ -17,6 +17,10 @@ export default class GrcApi {
     return GrcApi.request('listtransactions', from, amount);
   }
 
+  static getUnconfirmed() {
+    return GrcApi.request('getUnconfirmed');
+  }
+
   static getSummary() {
     return GrcApi.request('getSummary');
   }

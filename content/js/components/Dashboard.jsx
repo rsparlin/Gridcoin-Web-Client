@@ -1,6 +1,6 @@
 import React from 'react';
 import Moment from 'react-moment';
-import { Dimmer, Container, Header, Grid, List, Divider, Segment } from 'semantic-ui-react';
+import { Dimmer, Container, Header, Grid, List, Divider, Segment, Table } from 'semantic-ui-react';
 
 import GrcApi from '../GrcApi';
 import BigLoader from './BigLoader.jsx';
@@ -41,14 +41,21 @@ export default class Dashboard extends React.PureComponent {
     });
   }
 
-  async refresh() {
+  async getUnconfirmed() {
     try {
-      await this.getSummary();
-    } catch (e) {
-      this.setState({
-        error: e,
-      });
+      const res = await GrcApi.getUnconfirmed();
+
+      if (res.error) throw res.error;
+
+      this.setState({ unconfirmed: res.unconfirmed });
+    } catch (error) {
+      this.setState({ error });
     }
+  }
+
+  refresh() {
+    this.getUnconfirmed();
+    this.getSummary();
   }
 
   render() {
@@ -71,6 +78,7 @@ export default class Dashboard extends React.PureComponent {
       netTotals,
       recentTrans,
       blocks,
+      unconfirmed,
     } = this.state;
 
     return (
@@ -192,6 +200,42 @@ export default class Dashboard extends React.PureComponent {
                 />
               </Grid.Column>
             </Grid.Row>
+            {!!unconfirmed.length &&
+            <Grid.Row>
+              <Grid.Column>
+                <Header size="large" textAlign="center">
+                  Unconfirmed Transactions
+                </Header>
+                <Table size="large" basic="very" striped singleLine compact="very">
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell>Date</Table.HeaderCell>
+                      <Table.HeaderCell>Size</Table.HeaderCell>
+                      <Table.HeaderCell>Inputs</Table.HeaderCell>
+                      <Table.HeaderCell>Outputs</Table.HeaderCell>
+                      <Table.HeaderCell>Transaction ID</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    {unconfirmed
+                      .sort((a, b) => (b.date - a.date))
+                      .map(tx => (
+                        <Table.Row key={`unconfirmed-${tx.txid}`}>
+                          <Table.Cell>{(new Date(tx.time * 1000).toLocaleString())}</Table.Cell>
+                          <Table.Cell>
+                            {tx.vout.reduce((a, v) => (a + v.value), 0).toFixed(8)}
+                          </Table.Cell>
+                          <Table.Cell>{tx.vin.length}</Table.Cell>
+                          <Table.Cell>{tx.vin.length}</Table.Cell>
+                          <Table.Cell>{tx.txid}</Table.Cell>
+                        </Table.Row>
+                      ))
+                    }
+                  </Table.Body>
+                </Table>
+              </Grid.Column>
+            </Grid.Row>
+            }
           </Grid>
         </Segment>
       </Container>
